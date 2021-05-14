@@ -129,7 +129,7 @@ def edit_task(task_id):
             "due_date": request.form.get("due_date")
             "created_by": session["user"]
         }
-        mongo.db.tasks.update({"_id": objectId()},submit)
+        mongo.db.tasks.update({"_id": objectId(task_id)}, submit)
         flash("Task successfully updated")
 
     task = mongo.db.tasks.find_one({"_id": odjectId(task_id)})
@@ -139,7 +139,7 @@ def edit_task(task_id):
 
 @app.route("/delete_task/<task_id>")
 def delete_task(task_id):
-    mongo.db.tasks.remove({"_id": objectId()})
+    mongo.db.tasks.remove({"_id": objectId(task_id)})
     flash("Task successfully deleted")
     return redirect(url_for("get_tasks"))
 
@@ -161,6 +161,20 @@ def add_category():
         return redirect(url_for("get_categories"))
 
     return render_template("add_category.html")
+
+
+@app.route("/edit_category/<category_id>", methods=["GET", "POST"])
+def edit_category(category_id):
+    if request.method == "POST":
+        submit = {
+            "category_name": request.form.get("category_name")
+        }
+        mongo.db.tasks.update({"_id": objectId(category_id)}, submit)
+        flash("Category Successfully Updated")
+        return reditect(url_for("get_categories"))
+
+    category = mongo.db.categories.find_one({"_id": objectId(category_id)})
+    return render_template("edit_category.html", category=category)
 
 
 if __name__ == "__main__":
